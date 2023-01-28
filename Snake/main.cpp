@@ -40,15 +40,6 @@ int snake_main() {
     clear();
     snake.print(direction);
     mvprintw(food_y, food_x, "@");
-    auto input = getch();
-    switch (input) {
-      case KEY_UP: direction = SnakeDirection::UP; break;
-      case KEY_LEFT: direction = SnakeDirection::LEFT; break;
-      case KEY_DOWN: direction = SnakeDirection::DOWN; break;
-      case KEY_RIGHT: direction = SnakeDirection::RIGHT; break;
-      case 'q': return 0;
-    }
-    snake.move_snake(direction, MAX_X, MAX_Y, check_food);
     if (snake.intersects_with_self()) {
       timeout(-1);
       getch();
@@ -56,6 +47,16 @@ int snake_main() {
       // TODO: game over screen, highscores, etc
       break;
     }
+    auto input = getch();
+    switch (input) {
+      case KEY_UP:    if (direction != SnakeDirection::DOWN)  direction = SnakeDirection::UP;    break;
+      case KEY_LEFT:  if (direction != SnakeDirection::RIGHT) direction = SnakeDirection::LEFT;  break;
+      case KEY_DOWN:  if (direction != SnakeDirection::UP)    direction = SnakeDirection::DOWN;  break;
+      case KEY_RIGHT: if (direction != SnakeDirection::LEFT)  direction = SnakeDirection::RIGHT; break;
+
+      case 'q': return 0;
+    }
+    snake.move_snake(direction, MAX_X, MAX_Y, check_food);
   }
   return 0;  
 }

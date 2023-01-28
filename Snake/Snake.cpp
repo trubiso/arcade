@@ -78,17 +78,14 @@ bool Snake::intersects_with_coords(unsigned x, unsigned y) const {
 }
 
 bool Snake::intersects_with_self() {
-  std::vector<std::pair<unsigned, unsigned>> coords{};
+  if (this->last == nullptr) return false; // ?
+  auto x = this->last->x;
+  auto y = this->last->y;
   auto element = this->first;
-  while (element->next != nullptr) {
-    std::pair<unsigned, unsigned> element_coords{element->x, element->y};
-    if (std::find(coords.cbegin(), coords.cend(), element_coords) != coords.cend()) return true;
-    coords.push_back(element_coords);
+  while (element->next != nullptr) { // intentionally avoids last element
+    if (x == element->x && y == element->y) return true;
     element = element->next;
   }
-  std::pair<unsigned, unsigned> element_coords{element->x, element->y};
-  if (std::find(coords.cbegin(), coords.cend(), element_coords) != coords.cend()) return true;
-  coords.push_back(element_coords);
   return false;
 }
 
