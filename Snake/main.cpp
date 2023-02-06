@@ -20,6 +20,10 @@ void generate_random_food(Snake &snake, unsigned &food_x, unsigned &food_y) {
 
 int snake_main() {
   srand(time(NULL));
+  WINDOW *win = newwin(MAX_Y + 3, MAX_X + 3, 2, 1);
+  wtimeout(win, 200);
+  keypad(win, true);
+  clear();
 
   Snake snake{};
   snake.add_node(3, 3);
@@ -37,17 +41,19 @@ int snake_main() {
   bool should_close = false;
   while (!should_close) {
     // TODO: be efficient
-    clear();
-    snake.print(direction);
-    mvprintw(food_y, food_x, "@");
+    wclear(win);
+    wborder(win, 0, 0, 0, 0, 0, 0, 0, 0);
+    snake.print(win, direction, 1, 1);
+    mvwprintw(win, food_y + 1, food_x + 1, "@");
+    refresh();
     if (snake.intersects_with_self()) {
       timeout(-1);
-      getch();
+      wgetch(win);
       timeout(200);
       // TODO: game over screen, highscores, etc
       break;
     }
-    auto input = getch();
+    auto input = wgetch(win);
     switch (input) {
       case KEY_UP:    if (direction != SnakeDirection::DOWN)  direction = SnakeDirection::UP;    break;
       case KEY_LEFT:  if (direction != SnakeDirection::RIGHT) direction = SnakeDirection::LEFT;  break;
@@ -58,5 +64,8 @@ int snake_main() {
     }
     snake.move_snake(direction, MAX_X, MAX_Y, check_food);
   }
-  return 0;  
+
+  delwin(win);
+
+  return 0;
 }

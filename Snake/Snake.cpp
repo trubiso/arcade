@@ -1,5 +1,4 @@
 #include "Snake.h"
-#include <ncurses.h>
 #include <vector>
 #include <utility>
 #include <algorithm>
@@ -50,10 +49,10 @@ void Snake::move_snake(SnakeDirection direction, unsigned max_x, unsigned max_y,
   if (!is_food) remove_tail();
 }
 
-void Snake::print(SnakeDirection last_direction) const {
+void Snake::print(WINDOW *win, SnakeDirection last_direction, unsigned x_off, unsigned y_off) const {
   auto element = this->first;
   while (element->next != nullptr) {
-    mvaddwstr(element->y, element->x, L"█");
+    mvwaddwstr(win, element->y + y_off, element->x + x_off, L"█");
     element = element->next;
   }
   char last_char = '^';
@@ -63,7 +62,7 @@ void Snake::print(SnakeDirection last_direction) const {
     case SnakeDirection::DOWN: last_char = 'V'; break;
     case SnakeDirection::RIGHT: last_char = '>'; break;
   }
-  mvprintw(element->y, element->x, "%c", last_char);
+  mvwprintw(win, element->y + y_off, element->x + x_off, "%c", last_char);
 }
 
 bool Snake::intersects_with_coords(unsigned x, unsigned y) const {
